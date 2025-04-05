@@ -1,7 +1,7 @@
 // Configuración para ajustar la cantidad de gotas y el tiempo de caída
-const cantidadDeGotas = 100; // Número de gotas que caerán
-const tiempoDeCaida = 0.5; // Tiempo en segundos que tarda una gota en caer de principio a fin
-const intervalo = 5000 / 1; // 60Hz, o 60 imágenes por segundo
+const cantidadDeGotas = 5; // Número de gotas que caerán
+const tiempoDeCaida = 1; // Tiempo en segundos que tarda una gota en caer de principio a fin
+const intervalo = 15000 / 5; // 60Hz, o 60 imágenes por segundo
 
 // Obtener las imágenes del HTML
 const imagenesDisponibles = Array.from(document.querySelectorAll('img[id^="imagen"]'))
@@ -23,36 +23,23 @@ function crearGota() {
     // Añadir la imagen al cuerpo del documento
     document.body.appendChild(imagen);
 
-    let topPosition = 0; // Comienza fuera de la pantalla
-    const velocidadCaida = window.innerHeight / (tiempoDeCaida * 1000); // Ajustar la velocidad dependiendo de la altura de la ventana
-
     // Animación para que la imagen caiga
+    let topPosition = 0; // Comienza fuera de la pantalla
     const animacionCaida = setInterval(() => {
-        topPosition += velocidadCaida; // Incrementa la posición de la gota
+        topPosition += 5; // Ajusta la velocidad de caída (5px por intervalo)
+        imagen.style.top = topPosition + 'px';
 
-        // Si la gota ha llegado a la parte inferior de la pantalla
+        // Eliminar la imagen después de que haya caído completamente
         if (topPosition > window.innerHeight) {
-            clearInterval(animacionCaida); // Detener la animación de la gota
-            document.body.removeChild(imagen); // Eliminar la gota de la página
-        } else {
-            imagen.style.top = topPosition + 'px'; // Actualizar la posición de la gota
+            clearInterval(animacionCaida);
+            imagen.remove();
         }
-    }, 16); // Usar 16ms para una tasa de actualización de 60Hz
+    }, (tiempoDeCaida * 1000) / 60); // Dividir el tiempo de caída entre los 60Hz
 }
 
 // Función para generar gotas continuamente
 function generarLluvia() {
-    let gotasGeneradas = 0;
-
-    // Generar gotas al azar sin sobrepasar la cantidad especificada
-    const intervaloGeneracion = setInterval(() => {
-        if (gotasGeneradas < cantidadDeGotas) {
-            crearGota();
-            gotasGeneradas++;
-        } else {
-            clearInterval(intervaloGeneracion); // Detener el intervalo cuando se alcanzan las gotas deseadas
-        }
-    }, intervalo); // Intervalo de generación de gotas
+    setInterval(crearGota, intervalo); // Generar gotas a intervalos regulares
 }
 
 // Iniciar la lluvia de imágenes
